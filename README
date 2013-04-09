@@ -1,0 +1,10 @@
+embedded
+
+---
+
+This repository contains all the code I've collected and adapted while exploring
+the wonderful embedded world of AVR CMU's and many other components that can be
+attached to it to form a complete embedded system.
+
+Until further notice, all this code is targeted at the ATMEGA168.
+Accompanying information can be found at http://christophe.vg/Embedded
