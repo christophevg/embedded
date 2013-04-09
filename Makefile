@@ -78,12 +78,9 @@ AVRDUDE = avrdude
 REMOVE = rm -f
 COPY = cp
 
-# compiler flags to generate dependency files.
-GENDEPFLAGS = -MD -MP -MF .dep/$(@F).d
-
 # combine all necessary flags and optional flags.
 # add target processor to flags.
-ALL_CFLAGS = -mmcu=$(MCU) -I. $(CFLAGS) $(GENDEPFLAGS)
+ALL_CFLAGS = -mmcu=$(MCU) -I. $(CFLAGS)
 ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 # default target.
@@ -111,7 +108,7 @@ program: $(TARGET).hex $(TARGET).eep
 	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
 
 clean:
-	@rm -rf *.hex *.eep *.cof *.elf *.map *.sym *.lss *.lst *.o *.s *.d .dep
+	@rm -rf *.hex *.eep *.cof *.elf *.map *.sym *.lss *.lst *.o *.s
 
 # create final output files (.hex, .eep) from ELF output file.
 %.hex: %.elf
