@@ -11,5 +11,6 @@ Accompanying information can be found at http://christophe.vg/Embedded
 
 Top-level files:
   blink.c   your typical Hello World style, make a LED blink, first program
+  serial.c  adding a serial connection using the MAX232
 
 Other files are common files to the top-level files, such as: config.h, ...
