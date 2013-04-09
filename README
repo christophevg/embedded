@@ -8,3 +8,8 @@ attached to it to form a complete embedded system.
 
 Until further notice, all this code is targeted at the ATMEGA168.
 Accompanying information can be found at http://christophe.vg/Embedded
+
+Top-level files:
+  blink.c   your typical Hello World style, make a LED blink, first program
+
+Other files are common files to the top-level files, such as: config.h, ...
