@@ -30,7 +30,7 @@ int main(void) {
   serial_init();
 
   printf("\n\nATMEGA168 at your service...\n");
-  sbi(PORTC, STATUS_LED);
+  avr_set_bit(PORTC, STATUS_LED);
 
   while(active) {
     printf("shell> ");
@@ -52,7 +52,7 @@ int main(void) {
   }
 
   printf("\n\nsession terminated.\n");
-  cbi(PORTC, STATUS_LED);
+  avr_clear_bit(PORTC, STATUS_LED);
 
   return(0);
 }
