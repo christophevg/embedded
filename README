@@ -6,11 +6,14 @@ This repository contains all the code I've collected and adapted while exploring
 the wonderful embedded world of AVR CMU's and many other components that can be
 attached to it to form a complete embedded system.
 
-Until further notice, all this code is targeted at the ATMEGA168.
-Accompanying information can be found at http://christophe.vg/Embedded
+Until further notice, all this code is targeted at the ATMEGA168/328.
+Accompanying information can be found at http://christophe.vg/embedded
 
-Top-level files:
-  blink.c   your typical Hello World style, make a LED blink, first program
-  serial.c  adding a serial connection using the MAX232
+Top-level directories/projects:
+  blink    your typical Hello World style, make a LED blink, first program
+  serial   adding a serial connection using the MAX232
+  xt0f-003 my first wireless sensor node based on the ATMEGA and XBee module
 
-Other files are common files to the top-level files, such as: config.h, ...
+Other directories include:
+  avr      all code targetting the ATMEGA
+  tools    some tools to improve live
