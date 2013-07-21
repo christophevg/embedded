@@ -59,7 +59,13 @@ while(True):
     print "source  : ", ' '.join('%02x'%i for i in source), "/", \
                         ' '.join('%02x'%i for i in source2)
     print "options : ", options.encode("hex")
-    print "data    : ", ''.join(map(chr,data))
+    
+    # decoding of temperature = first two bytes
+    reading = data[0] + data[1] * 256
+    volt    = (reading / 1024.0) * 3.3
+    degr    = (volt - 0.25) / 0.028
+
+    print "data    : ", ' '.join(map(str,data)), ' = ', reading, ' => ', volt, "V = ", degr, "C"
     print "checksum: ", checksum.encode("hex")
     print "-" * 80
 
