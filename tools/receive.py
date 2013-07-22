@@ -61,11 +61,19 @@ while(True):
     print "options : ", options.encode("hex")
     
     # decoding of temperature = first two bytes
-    reading = data[0] + data[1] * 256
-    volt    = (reading / 1024.0) * 3.3
-    degr    = (volt - 0.25) / 0.028
+    temp = data[0] + data[1] * 256
+    temp_volt = (temp / 1024.0) * 3.3
+    temp_degr = (temp_volt - 0.25) / 0.028
 
-    print "data    : ", ' '.join(map(str,data)), ' = ', reading, ' => ', volt, "V = ", degr, "C"
+    # decoding of VCC = third byte
+    power = data[2]
+    power_vcc = 1.045 * 255 / power
+    power_pct = power_vcc / 3.3 * 100
+
+    print "data    :", ' '.join(map(str,data))
+    print "   temp :", temp,  '=>', temp_volt, "V =", temp_degr, "C"
+    print "   power:", power, '=>', power_vcc, "V =", power_pct, "%"
+
     print "checksum: ", checksum.encode("hex")
     print "-" * 80
 

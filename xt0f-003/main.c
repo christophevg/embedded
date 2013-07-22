@@ -35,10 +35,11 @@ int main(void) {
   xbee_transmit_string("ONLINE"); // remotely
 
   uint16_t reading;    // the 16-bit reading from the ADC
-  uint8_t  values[2];  // the bytes containing the readings
+  uint8_t  values[3];  // the bytes containing the readings
 
   // endless loop
   while(TRUE) {
+    // TEMPERATURE
     // get sensor value
     reading = avr_adc_read(TEMP_SENSOR);
 
@@ -46,8 +47,12 @@ int main(void) {
     values[0] = reading & 0x00FF;
     values[1] = (reading >> 8 ) & 0x00FF;
 
+    // VCC
+    // get power level
+    values[2] = avr_get_vcc();
+
     // print it to the serial
-    xbee_transmit(values, 2);
+    xbee_transmit(values, 3);
 
     // sleep
     // TODO implement actual sleep mode to conserve power
