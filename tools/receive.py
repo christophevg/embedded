@@ -60,15 +60,15 @@ while(True):
                         ' '.join('%02x'%i for i in source2)
     print "options : ", options.encode("hex")
     
-    # decoding of temperature = first two bytes
-    temp = data[0] + data[1] * 256
+    # decoding of VCC = first byte
+    power = data[0]
+    power_vcc = 0.95 * 255 / power
+    power_pct = power_vcc / 3.3 * 100
+
+    # decoding of temperature = second and third byte
+    temp = data[1] + data[2] * 256
     temp_volt = (temp / 1024.0) * 3.3
     temp_degr = (temp_volt - 0.25) / 0.028
-
-    # decoding of VCC = third byte
-    power = data[2]
-    power_vcc = 1.045 * 255 / power
-    power_pct = power_vcc / 3.3 * 100
 
     print "data    :", ' '.join(map(str,data))
     print "   temp :", temp,  '=>', temp_volt, "V =", temp_degr, "C"

@@ -12,52 +12,95 @@
 #include "../avr/serial.h"
 #include "../avr/xbee.h"
 
+// forward declarations
+void sleep(void);
+void wakeup(void);
 
 /* configuration of external components */
-#define STATUS_LED  0
-#define TEMP_SENSOR 4
+#define SENSOR_VCC   1  // PB1
+#define STATUS_LED   0  // PC0
+#define TEMP_SENSOR  4  // PC4
+#define LIGHT_SENSOR 5  // PC5
 
 int main(void) {
 
+  // initialise MCU
   avr_init();
-  avr_adc_init();
   
+  // turn on the red status led ASAP to show boot process
+  avr_set_bit(PORTC, STATUS_LED);
+
+  // initialize the ADC for normal readings
+  avr_adc_init();
+
+  // we're using the XBee module, connected to the UART
   serial_init();
 
   // app specific init
   // set pin TEMP_SENSOR on port C to 0 = input
   avr_clear_bit(DDRC, TEMP_SENSOR);
 
+  // wait until the network is available
   xbee_wait_for_association();
 
   // show we're operational
-  avr_set_bit(PORTC, STATUS_LED); // visually
-  xbee_transmit_string("ONLINE"); // remotely
+  avr_clear_bit(PORTC, STATUS_LED); // visually by removing the boot indicator
+  xbee_transmit_string("HELLO");    // remotely to announce we're booted
 
   uint16_t reading;    // the 16-bit reading from the ADC
   uint8_t  values[3];  // the bytes containing the readings
 
-  // endless loop
+  // the endless loop
   while(TRUE) {
+    // make sure that we're awake
+    wakeup();
+
     // TEMPERATURE
     // get sensor value
     reading = avr_adc_read(TEMP_SENSOR);
 
     // split the 16-bit reading into 2 bytes
-    values[0] = reading & 0x00FF;
-    values[1] = (reading >> 8 ) & 0x00FF;
+    values[1] = reading & 0x00FF;
+    values[2] = (reading >> 8 ) & 0x00FF;
 
     // VCC
     // get power level
-    values[2] = avr_get_vcc();
+    // NOTE: this must be read last, the sleep period gives the ADC time to
+    //       recover it seems
+    // TODO: investigate
+    values[0] = avr_get_vcc();
 
     // print it to the serial
     xbee_transmit(values, 3);
 
-    // sleep
-    // TODO implement actual sleep mode to conserve power
-    _delay_ms(2000);
+    // make sure everything is transmitted
+    // TODO: how to do this CLEANLY?
+    _delay_ms(100);
+
+    sleep();
   }
 
   return(0);
+}
+
+void wakeup(void) {
+  // give power to sensors
+  avr_set_bit(PORTB, SENSOR_VCC);
+  // give it some time to rise ...
+  // TODO: how to do this CLEANLY ?
+  _delay_ms(100);
+
+  // revive the XBee from hibernation (this includes waiting for association)
+  xbee_wakeup();
+}
+
+void sleep(void) {
+  // put XBee to sleep
+  xbee_sleep();
+
+  // revoke power to sensors
+  avr_clear_bit(PORTB, SENSOR_VCC);
+
+  // TODO implement actual sleep mode to conserve power
+  _delay_ms(2000);
 }
