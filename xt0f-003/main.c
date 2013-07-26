@@ -22,7 +22,7 @@ void wakeup(void);
 #define TEMP_SENSOR  4  // PC4
 #define LIGHT_SENSOR 5  // PC5
 
-#define VALUES_COUNT 5  // 2 bytes for temperature and light, 1 bytes for VCC
+#define VALUES_COUNT 6  // 2 bytes for temperature and light, 1 bytes for VCC
 
 int main(void) {
 
@@ -53,7 +53,6 @@ int main(void) {
   avr_clear_bit(PORTC, STATUS_LED); // visually by removing the boot indicator
   xbee_transmit_string("HELLO");    // remotely to announce we're booted
 
-
   // the endless loop
   while(TRUE) {
     // make sure that we're awake
@@ -64,22 +63,24 @@ int main(void) {
     reading = avr_adc_read(TEMP_SENSOR);
 
     // split the 16-bit reading into 2 bytes
-    values[1] = reading & 0x00FF;
-    values[2] = (reading >> 8 ) & 0x00FF;
+    values[2] = reading & 0x00FF;
+    values[3] = (reading >> 8 ) & 0x00FF;
 
     // LIGHT
     reading = avr_adc_read(LIGHT_SENSOR);
 
     // split the 16-bit reading into 2 bytes
-    values[3] = reading & 0x00FF;
-    values[4] = (reading >> 8 ) & 0x00FF;
+    values[4] = reading & 0x00FF;
+    values[5] = (reading >> 8 ) & 0x00FF;
 
     // VCC
     // get power level
     // NOTE: this must be read last, the sleep period gives the ADC time to
     //       recover it seems
     // TODO: investigate
-    values[0] = avr_get_vcc();
+    reading = avr_get_vcc();
+    values[0] = reading & 0x00FF;
+    values[1] = (reading >> 8 ) & 0x00FF;
 
     // print it to the serial
     xbee_transmit(values, VALUES_COUNT);
@@ -93,9 +94,10 @@ int main(void) {
 void wakeup(void) {
   // give power to sensors
   avr_set_bit(PORTB, SENSOR_VCC);
+
   // give it some time to rise ...
   // TODO: how to do this CLEANLY ?
-  _delay_ms(100);
+  _delay_ms(10);
 
   // revive the XBee from hibernation (this includes waiting for association)
   xbee_wakeup();
@@ -109,5 +111,5 @@ void sleep(void) {
   avr_clear_bit(PORTB, SENSOR_VCC);
 
   // TODO implement actual sleep mode to conserve power
-  _delay_ms(2000);
+  _delay_ms(10000);
 }

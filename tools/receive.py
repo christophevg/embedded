@@ -67,19 +67,19 @@ while(True):
 
     if data == [72, 69, 76, 76, 79 ]:
       print " -> node joining"
-    elif len(data) == 5:
+    elif len(data) == 6:
       # decoding of VCC = first byte
-      power = data[0]
-      power_vcc = 0.95 * 255 / power
-      power_pct = power_vcc / 3.3 * 100
+      power = data[0] + data[1] * 256
+      power_vcc = (power / 255.0) * 1.1
+      power_pct = power_vcc / 1.1 * 100
 
       # decoding of temperature = second and third byte
-      temp = data[1] + data[2] * 256
+      temp = data[2] + data[3] * 256
       temp_volt = (temp / 1024.0) * 3.3
       temp_degr = (temp_volt - 0.25) / 0.028
 
       # decoding of light intensity = fourth and fifth byte
-      light = data[3] + data[4] * 256
+      light = data[4] + data[5] * 256
       light_pct = light / 10.24
 
       print " -> readings:"
