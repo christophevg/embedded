@@ -10,6 +10,7 @@
 #include "../avr/avr.h"
 #include "../avr/bool.h"
 #include "../avr/serial.h"
+#include "../avr/sleep.h"
 #include "../avr/xbee.h"
 
 // forward declarations
@@ -39,6 +40,9 @@ int main(void) {
 
   // we're using the XBee module, connected to the UART
   serial_init();
+
+  // we're using power-down-style sleeping
+  sleep_init();
 
   // app specific init
   // set pin TEMP_SENSOR on port C to 0 = input
@@ -110,6 +114,6 @@ void sleep(void) {
   // revoke power to sensors
   avr_clear_bit(PORTB, SENSOR_VCC);
 
-  // TODO implement actual sleep mode to conserve power
-  _delay_ms(10000);
+  // power-down the MCU
+  sleep_ms(59000L);
 }
