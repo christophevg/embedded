@@ -22,8 +22,12 @@ void wakeup(void);
 #define TEMP_SENSOR  4  // PC4
 #define LIGHT_SENSOR 5  // PC5
 
+#define VALUES_COUNT 5  // 2 bytes for temperature and light, 1 bytes for VCC
+
 int main(void) {
 
+  uint16_t reading;               // the 16-bit reading from the ADC
+  uint8_t  values[VALUES_COUNT];  // the bytes containing the readings
   // initialise MCU
   avr_init();
   
@@ -39,6 +43,8 @@ int main(void) {
   // app specific init
   // set pin TEMP_SENSOR on port C to 0 = input
   avr_clear_bit(DDRC, TEMP_SENSOR);
+  // set pin LIGHT_SENSOR on port C to 0 = input
+  avr_clear_bit(DDRC, LIGHT_SENSOR);
 
   // wait until the network is available
   xbee_wait_for_association();
@@ -47,8 +53,6 @@ int main(void) {
   avr_clear_bit(PORTC, STATUS_LED); // visually by removing the boot indicator
   xbee_transmit_string("HELLO");    // remotely to announce we're booted
 
-  uint16_t reading;    // the 16-bit reading from the ADC
-  uint8_t  values[3];  // the bytes containing the readings
 
   // the endless loop
   while(TRUE) {
@@ -63,6 +67,13 @@ int main(void) {
     values[1] = reading & 0x00FF;
     values[2] = (reading >> 8 ) & 0x00FF;
 
+    // LIGHT
+    reading = avr_adc_read(LIGHT_SENSOR);
+
+    // split the 16-bit reading into 2 bytes
+    values[3] = reading & 0x00FF;
+    values[4] = (reading >> 8 ) & 0x00FF;
+
     // VCC
     // get power level
     // NOTE: this must be read last, the sleep period gives the ADC time to
@@ -71,7 +82,7 @@ int main(void) {
     values[0] = avr_get_vcc();
 
     // print it to the serial
-    xbee_transmit(values, 3);
+    xbee_transmit(values, VALUES_COUNT);
 
     // make sure everything is transmitted
     // TODO: how to do this CLEANLY?
