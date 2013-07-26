@@ -84,10 +84,6 @@ int main(void) {
     // print it to the serial
     xbee_transmit(values, VALUES_COUNT);
 
-    // make sure everything is transmitted
-    // TODO: how to do this CLEANLY?
-    _delay_ms(100);
-
     sleep();
   }
 
