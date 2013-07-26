@@ -14,6 +14,7 @@
 
 import serial
 import sys
+import time
 
 ser = serial.Serial('/dev/tty.usbserial-AD025LL3', 9600)
 
@@ -54,25 +55,39 @@ while(True):
 
     # print out frame in a "nice" format ;-)
     print "-" * 80
+    print "time    : ", time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())
     print "frame   : ", frame.encode("hex")
     print "length  : ", length, " / actual = ", actual
     print "source  : ", ' '.join('%02x'%i for i in source), "/", \
                         ' '.join('%02x'%i for i in source2)
     print "options : ", options.encode("hex")
-    
-    # decoding of VCC = first byte
-    power = data[0]
-    power_vcc = 0.95 * 255 / power
-    power_pct = power_vcc / 3.3 * 100
 
-    # decoding of temperature = second and third byte
-    temp = data[1] + data[2] * 256
-    temp_volt = (temp / 1024.0) * 3.3
-    temp_degr = (temp_volt - 0.25) / 0.028
-
+    # data
     print "data    :", ' '.join(map(str,data))
-    print "   temp :", temp,  '=>', temp_volt, "V =", temp_degr, "C"
-    print "   power:", power, '=>', power_vcc, "V =", power_pct, "%"
+
+    if data == [72, 69, 76, 76, 79 ]:
+      print " -> node joining"
+    elif len(data) == 5:
+      # decoding of VCC = first byte
+      power = data[0]
+      power_vcc = 0.95 * 255 / power
+      power_pct = power_vcc / 3.3 * 100
+
+      # decoding of temperature = second and third byte
+      temp = data[1] + data[2] * 256
+      temp_volt = (temp / 1024.0) * 3.3
+      temp_degr = (temp_volt - 0.25) / 0.028
+
+      # decoding of light intensity = fourth and fifth byte
+      light = data[3] + data[4] * 256
+      light_pct = light / 10.24
+
+      print " -> readings:"
+      print "   temp :", temp,  '=>', temp_volt, "V =", temp_degr, "C"
+      print "   light:", light, '=>', light_pct, "%"
+      print "   power:", power, '=>', power_vcc, "V =", power_pct, "%"
+    else:
+      print " -> unknown packet"
 
     print "checksum: ", checksum.encode("hex")
     print "-" * 80
