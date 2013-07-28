@@ -20,8 +20,8 @@ void wakeup(void);
 /* configuration of external components */
 #define SENSOR_VCC   1  // PB1
 #define STATUS_LED   0  // PC0
-#define TEMP_SENSOR  4  // PC4
-#define LIGHT_SENSOR 5  // PC5
+#define TEMP_SENSOR  5  // PC4
+#define LIGHT_SENSOR 4  // PC5
 
 #define VALUES_COUNT 6  // 2 bytes for temperature and light, 1 bytes for VCC
 
