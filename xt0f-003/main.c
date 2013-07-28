@@ -23,7 +23,7 @@ void wakeup(void);
 #define TEMP_SENSOR  5  // PC4
 #define LIGHT_SENSOR 4  // PC5
 
-#define VALUES_COUNT 6  // 2 bytes for temperature and light, 1 bytes for VCC
+#define VALUES_COUNT 6  // 2 bytes for VCC, temperature & light
 
 int main(void) {
 
@@ -102,6 +102,10 @@ void wakeup(void) {
   // give it some time to rise ...
   // TODO: how to do this CLEANLY ?
   _delay_ms(10);
+
+  // re-initialize the ADC for normal readings
+  // TODO: move this elsewhere once I understand enabling ADC better ;-)
+  avr_adc_init();
 
   // revive the XBee from hibernation (this includes waiting for association)
   xbee_wakeup();
