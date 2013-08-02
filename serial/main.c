@@ -15,7 +15,7 @@
 
 #define MAX_CMD_SIZE 64
 
-#define STATUS_LED 0
+#define STATUS_LED 3
 
 int main(void) {
   bool    active = TRUE;
@@ -30,7 +30,7 @@ int main(void) {
   serial_init();
 
   printf("\n\nATMEGA168 at your service...\n");
-  avr_set_bit(PORTC, STATUS_LED);
+  avr_set_bit(PORTD, STATUS_LED);
 
   while(active) {
     printf("shell> ");
@@ -52,7 +52,7 @@ int main(void) {
   }
 
   printf("\n\nsession terminated.\n");
-  avr_clear_bit(PORTC, STATUS_LED);
+  avr_clear_bit(PORTD, STATUS_LED);
 
   return(0);
 }

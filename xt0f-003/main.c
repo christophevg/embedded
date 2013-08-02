@@ -19,7 +19,7 @@ void wakeup(void);
 
 /* configuration of external components */
 #define SENSOR_VCC   1  // PB1
-#define STATUS_LED   0  // PC0
+#define STATUS_LED   3  // PD3
 #define TEMP_SENSOR  5  // PC4
 #define LIGHT_SENSOR 4  // PC5
 
@@ -33,7 +33,7 @@ int main(void) {
   avr_init();
   
   // turn on the red status led ASAP to show boot process
-  avr_set_bit(PORTC, STATUS_LED);
+  avr_set_bit(PORTD, STATUS_LED);
 
   // initialize the ADC for normal readings
   avr_adc_init();
@@ -54,7 +54,7 @@ int main(void) {
   xbee_wait_for_association();
 
   // show we're operational
-  avr_clear_bit(PORTC, STATUS_LED); // visually by removing the boot indicator
+  avr_clear_bit(PORTD, STATUS_LED); // visually by removing the boot indicator
   xbee_transmit_string("HELLO");    // remotely to announce we're booted
 
   // the endless loop
