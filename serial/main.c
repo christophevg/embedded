@@ -9,7 +9,6 @@
 
 #include "../avr/avr.h"
 #include "../avr/bool.h"
-#include "../avr/bits.h"
 #include "../avr/serial.h"
 
 
