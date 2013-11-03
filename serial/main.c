@@ -11,10 +11,10 @@
 #include "../avr/bool.h"
 #include "../avr/serial.h"
 
-
 #define MAX_CMD_SIZE 64
 
-#define STATUS_LED 3
+#define STATUS_PORT PORTC
+#define STATUS_PIN 5
 
 int main(void) {
   bool    active = TRUE;
@@ -28,8 +28,8 @@ int main(void) {
   avr_init();
   serial_init();
 
-  printf("\n\nATMEGA168 at your service...\n");
-  avr_set_bit(PORTD, STATUS_LED);
+  printf("\n\n%s at your service...\n", MCU_NAME);
+  avr_set_bit(STATUS_PORT, STATUS_PIN);
 
   while(active) {
     printf("shell> ");
@@ -51,7 +51,7 @@ int main(void) {
   }
 
   printf("\n\nsession terminated.\n");
-  avr_clear_bit(PORTD, STATUS_LED);
+  avr_clear_bit(STATUS_PORT, STATUS_PIN);
 
   return(0);
 }
