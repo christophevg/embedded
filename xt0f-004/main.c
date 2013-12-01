@@ -5,9 +5,9 @@
 // see http://christophe.vg/embedded/xt0f-004 for more info
 // basically this mote consists of:
 // - ATMEGA1284p
-// - RS-232 connection on USART0
-// - XBEE on USART1
-// - Light and Temperature sensors
+// - RS-232 connection on USART1
+// - XBEE on USART0
+// - Light and temperature sensors
 // - LEDs for power-on (red) / operation (green)  / alert (orange)
 
 #include <avr/io.h>

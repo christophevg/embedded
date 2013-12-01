@@ -9,3 +9,8 @@ AVRDUDE_PROGRAMMER=jtag2
 MORE_CDEFS=-DSERIAL_ON_USART1 # -DXBEE_ON_USART0
 
 include ../avr/Makefile
+
+clean: clean_avr
+
+clean_avr:
+	@(cd ../avr; $(MAKE) clean)
