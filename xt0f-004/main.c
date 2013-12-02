@@ -92,6 +92,8 @@ int main(void) {
     printf("step\n");
     send_str("step\n");
 
+    _delay_ms(10); // TODO: still needed before sleep to have all data out
+
     sleep();
   }
 
