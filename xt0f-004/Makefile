@@ -6,7 +6,9 @@ F_CPU=8000000
 AVRDUDE_PROGRAMMER=jtag2
 
 # external hardware composition ... yummie :-)
-MORE_CDEFS=-DSERIAL_ON_USART1 # -DXBEE_ON_USART0
+MORE_CDEFS=-DSERIAL_ON_USART1 # -DXBEE_ON_USART0 == default
+
+# MORE_CDEFS=-DDEBUG -DSERIAL_ON_USART1 # -DXBEE_ON_USART0 == default
 
 include ../avr/Makefile
 
