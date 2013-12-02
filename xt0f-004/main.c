@@ -74,7 +74,7 @@ int main(void) {
   send_str("xbee associated\n");  // announce boot process via xbee
 
   while(TRUE) {
-    // wakeup();
+    wakeup();
 
     // // temperature
     // reading = avr_adc_read(TEMP_SENSOR_PIN);
@@ -92,9 +92,7 @@ int main(void) {
     printf("step\n");
     send_str("step\n");
 
-    _delay_ms(1000L);
-
-    // sleep();
+    sleep();
   }
 
   return(0);
