@@ -19,6 +19,7 @@
 #include "../avr/serial.h"
 #include "../avr/sleep.h"
 #include "../avr/xbee.h"
+#include "../avr/clock.h"
 
 // forward declarations
 void sleep(void);
@@ -59,6 +60,14 @@ int main(void) {
 
   sleep_init();                   // we're using power-down-style sleeping
 
+  clock_init();                   // init/start the millis clock
+  
+  // printf("clock started: %lu\n", clock_get_millis());
+  // _delay_ms(1000L);
+  // printf("clock started: %lu\n", clock_get_millis());
+  // _delay_ms(10000L);
+
+
   // avr_clear_bit(TEMP_SENSOR_PORT, // prepare sensor pins for input
   //               TEMP_SENSOR_PIN );
   // avr_clear_bit(LIGHT_SENSOR_PORT,
@@ -75,6 +84,8 @@ int main(void) {
 
   while(TRUE) {
     wakeup();
+
+    printf("time = %lu\n", clock_get_millis());
 
     // // temperature
     // reading = avr_adc_read(TEMP_SENSOR_PIN);
@@ -131,5 +142,6 @@ void wakeup(void) {
 void sleep(void) {
   xbee_sleep();                     // put XBee to sleep
   // avr_clear_bit(PORTB, SENSOR_VCC); // revoke power to sensors
-  sleep_ms(1000L);                  // power-down the MCU for 1 second
+  //sleep_ms(1000L);                  // power-down the MCU for 1 second
+  _delay_ms(1000L);
 }
