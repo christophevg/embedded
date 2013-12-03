@@ -85,8 +85,6 @@ int main(void) {
   while(TRUE) {
     wakeup();
 
-    printf("time = %lu\n", clock_get_millis());
-
     // // temperature
     // reading = avr_adc_read(TEMP_SENSOR_PIN);
     // values[1] = reading & 0x00FF;
@@ -100,10 +98,8 @@ int main(void) {
     // // print it to the serial
     // send_bytes(values, VALUES_COUNT);
 
-    printf("step\n");
+    printf("step @ %lu\n", clock_get_millis());
     send_str("step\n");
-
-    _delay_ms(10); // TODO: still needed before sleep to have all data out
 
     sleep();
   }
@@ -139,9 +135,18 @@ void wakeup(void) {
                                     // (this includes waiting for association)
 }
 
+static unsigned long previous_start = 0;
+
 void sleep(void) {
   xbee_sleep();                     // put XBee to sleep
   // avr_clear_bit(PORTB, SENSOR_VCC); // revoke power to sensors
-  //sleep_ms(1000L);                  // power-down the MCU for 1 second
-  _delay_ms(1000L);
+  // power-down the MCU until full second has passed
+  // compute remaining time until next full second
+  unsigned long awake = (clock_get_millis() - previous_start);
+  if(awake < 1000) {
+    unsigned long sleep = 1000 - awake;
+    debug_printf("sleeping for %lu ms\n", sleep);
+    sleep_ms(sleep);
+  }
+  previous_start = clock_get_millis();
 }
