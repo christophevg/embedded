@@ -139,7 +139,11 @@ void sleep(void) {
   if(awake < 1000) {
     unsigned long sleep = 1000 - awake;
     debug_printf("sleeping for %lu ms\n", sleep);
+    avr_clear_bit(STATUS_LED_PORT,  // turn on the green status led
+                  STATUS_LED_PIN);
     sleep_ms(sleep);
   }
   previous_start = clock_get_millis();
+  avr_set_bit(STATUS_LED_PORT,      // turn on the green status led
+              STATUS_LED_PIN);
 }
