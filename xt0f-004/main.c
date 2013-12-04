@@ -6,9 +6,9 @@
 // basically this mote consists of:
 // - ATMEGA1284p
 // - RS-232 connection on USART1
-// - XBEE on USART0
-// - Light and temperature sensors
-// - LEDs for power-on (red) / operation (green)  / alert (orange)
+// - XBEE on USART0 (XBee includes two LEDs indicating state and association)
+// - light sensor
+// - LEDs for power-on (red) / status (green)  / alert (orange)
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -21,90 +21,85 @@
 #include "../avr/xbee.h"
 #include "../avr/clock.h"
 
-// forward declarations
-void sleep(void);
-void wakeup(void);
-void send(uint8_t *bytes);
-void send_str(const char *string);
-
 // configuration of external components
 
-#define STATUS_LED_PORT    PORTD  // PD6
-#define STATUS_LED_PIN     6
-// #define OPERATION_LED_PORT PORTD  // PD4
-// #define OPERATION_LED_PIN  4
-// #define ALERT_LED_PORT     PORTD  // PD5     
+#define STATUS_LED_PORT    PORTB  // PB0
+#define STATUS_LED_PIN     0
 
-// #define TEMP_SENSOR_PORT   DDRC   // PC4
-// #define TEMP_SENSOR_PIN    5
-// #define LIGHT_SENSOR_PORT  DDRC   // PC5
-// #define LIGHT_SENSOR_PIN   4
+#define ALERT_LED_PORT     PORTB  // PB1
+#define ALERT_LED_PIN      1
 
-// #define VALUES_COUNT 4            // 2 bytes temperature & light
+#define LIGHT_SENSOR_PORT  DDRA   // PA0
+#define LIGHT_SENSOR_PIN   0
+
+#define VCC_SENSOR_PORT    PORTB  // PB7
+#define VCC_SENSOR_PIN     7
 
 // network config
 #define DESTINATION XBEE_COORDINATOR
 
+// forward declarations
+void init(void);
+void wakeup(void);
+void send(uint8_t *bytes);
+void send_str(const char *string);
+void sleep(void);
+
 int main(void) {
-  // uint16_t reading;               // the 16-bit reading from the ADC
-  // uint8_t  values[VALUES_COUNT];  // the bytes containing the readings
+  uint16_t reading;               // the 16-bit reading from the ADC
+  uint8_t  values[2];             // the bytes containing the reading in bytes
 
-  avr_init();                     // initialise MCU
-  avr_set_bit(STATUS_LED_PORT,    // turn on the red status led
-              STATUS_LED_PIN);
-  avr_adc_init();                 // initialize the ADC for normal readings
-  serial_init();                  // initialize use of serial port(s)
-
-  printf("------------------------------------------------------\n");
-  printf("serial initialized\n"); // announce boot process via serial
-
-  sleep_init();                   // we're using power-down-style sleeping
-
-  clock_init();                   // init/start the millis clock
-  
-  // printf("clock started: %lu\n", clock_get_millis());
-  // _delay_ms(1000L);
-  // printf("clock started: %lu\n", clock_get_millis());
-  // _delay_ms(10000L);
-
-
-  // avr_clear_bit(TEMP_SENSOR_PORT, // prepare sensor pins for input
-  //               TEMP_SENSOR_PIN );
-  // avr_clear_bit(LIGHT_SENSOR_PORT,
-  //               LIGHT_SENSOR_PIN);
-
-  xbee_init();                    // initialize use of XBee module
-
-  printf("xbee initialized\n");
-
-  xbee_wait_for_association();    // wait until the network is available
-
-  printf("xbee associated\n");    // announce boot process via serial
-  send_str("xbee associated\n");  // announce boot process via xbee
+  init();
 
   while(TRUE) {
     wakeup();
 
-    // // temperature
-    // reading = avr_adc_read(TEMP_SENSOR_PIN);
-    // values[1] = reading & 0x00FF;
-    // values[2] = (reading >> 8) & 0x00FF;
-    // 
-    // // light
-    // reading = avr_adc_read(LIGHT_SENSOR_PIN);
-    // values[3] = reading & 0x00FF;
-    // values[4] = (reading >> 8 ) & 0x00FF;
-    // 
-    // // print it to the serial
-    // send_bytes(values, VALUES_COUNT);
+    // light
+    reading = avr_adc_read(LIGHT_SENSOR_PIN);
+    values[0] = (reading >> 8 ) & 0x00FF;
+    values[1] = reading & 0x00FF;
 
-    printf("step @ %lu\n", clock_get_millis());
-    send_str("step\n");
+    // send it to the coordinator
+    send_bytes(values, 2);
+    // print it to the serial
+    printf("[%06lu] light = %3i (0x%04X)\n", clock_get_millis(),
+           reading, reading);
 
     sleep();
   }
 
   return(0);
+}
+
+void init(void) {
+  // MCU
+  avr_init();                     // initialise MCU
+  avr_set_bit(STATUS_LED_PORT,    // turn on the red status led
+              STATUS_LED_PIN);
+  avr_adc_init();                 // initialize the ADC for normal readings
+
+  sleep_init();                   // we're using power-down-style sleeping
+  clock_init();                   // init/start the millis clock
+
+  // SERIAL
+  serial_init();                  // initialize use of serial port(s)
+  printf("-----------------------------------------------------------------\n");
+  printf("serial initialized\n"); // announce boot process via serial
+
+  // XBEE
+  xbee_init();                    // initialize use of XBee module
+  printf("xbee initialized, waiting for association...\n");
+  xbee_wait_for_association();    // wait until the network is available
+  printf("xbee associated\n");    // announce boot process via serial
+  send_str("xbee associated\n");  // announce boot process via xbee
+
+  // FUNCTIONALITY
+  avr_clear_bit(LIGHT_SENSOR_PORT,// make light sensor pin an input pin
+                LIGHT_SENSOR_PIN);  
+}
+
+void send_str(const char *string) {
+  send_bytes((uint8_t*)string, strlen(string));
 }
 
 void send_bytes(uint8_t *bytes, uint8_t size) {
@@ -121,12 +116,9 @@ void send_bytes(uint8_t *bytes, uint8_t size) {
   xbee_send(&frame);
 }
 
-void send_str(const char *string) {
-  send_bytes((uint8_t*)string, strlen(string));
-}
-
 void wakeup(void) {
-  // avr_set_bit(PORTB, SENSOR_VCC);   // give power to sensors
+  avr_set_bit(VCC_SENSOR_PORT,      // provide power to sensor
+              VCC_SENSOR_PIN);
   _delay_ms(10);                    // time to rise - TODO: how o this CLEANLY?
   avr_adc_init();                   // re-initialize the ADC
                                     // TODO: move this elsewhere once I
@@ -139,7 +131,8 @@ static unsigned long previous_start = 0;
 
 void sleep(void) {
   xbee_sleep();                     // put XBee to sleep
-  // avr_clear_bit(PORTB, SENSOR_VCC); // revoke power to sensors
+  avr_clear_bit(VCC_SENSOR_PORT,    // revoke power to sensor
+                VCC_SENSOR_PIN);
   // power-down the MCU until full second has passed
   // compute remaining time until next full second
   unsigned long awake = (clock_get_millis() - previous_start);
