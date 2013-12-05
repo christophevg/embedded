@@ -6,8 +6,8 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-#include "../avr/avr.h"
-#include "../avr/bool.h"
+#include "../moose/avr.h"
+#include "../moose/bool.h"
 
 #define STATUS_LED 3
 

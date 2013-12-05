@@ -14,12 +14,12 @@
 #include <util/delay.h>
 #include <string.h>
 
-#include "../avr/avr.h"
-#include "../avr/bool.h"
-#include "../avr/serial.h"
-#include "../avr/sleep.h"
-#include "../avr/xbee.h"
-#include "../avr/clock.h"
+#include "../moose/avr.h"
+#include "../moose/bool.h"
+#include "../moose/serial.h"
+#include "../moose/sleep.h"
+#include "../moose/xbee.h"
+#include "../moose/clock.h"
 
 // configuration of external components
 

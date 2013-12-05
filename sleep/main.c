@@ -6,10 +6,10 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-#include "../avr/avr.h"
-#include "../avr/bool.h"
-#include "../avr/serial.h"
-#include "../avr/sleep.h"
+#include "../moose/avr.h"
+#include "../moose/bool.h"
+#include "../moose/serial.h"
+#include "../moose/sleep.h"
 
 /* configuration of external components */
 #define STATUS_LED 3  // PD3

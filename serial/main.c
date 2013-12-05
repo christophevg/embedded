@@ -7,9 +7,9 @@
 #include <avr/io.h>
 #include <string.h>
 
-#include "../avr/avr.h"
-#include "../avr/bool.h"
-#include "../avr/serial.h"
+#include "../moose/avr.h"
+#include "../moose/bool.h"
+#include "../moose/serial.h"
 
 #define MAX_CMD_SIZE 64
 

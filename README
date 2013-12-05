@@ -12,8 +12,10 @@ Accompanying information can be found at http://christophe.vg/embedded
 Top-level directories/projects:
   blink    your typical Hello World style, make a LED blink, first program
   serial   adding a serial connection using the MAX232
-  xt0f-003 my first wireless sensor node based on the ATMEGA and XBee module
+  xt0f-003 my first wireless sensor node based on the ATMEGA8 and XBee module
+  xt0f-004 my second wireless sensor, similar to the xt0f-003, but now based on
+           the ATMEGA1284p, with a serial connection and an XBee module
 
 Other directories include:
-  avr      all code targetting the ATMEGA
+  moose    all code targetting the ATMEGA and related hardware (submodule)
   tools    some tools to improve life
