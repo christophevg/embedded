@@ -1,5 +1,5 @@
-MORE_SRC = ../avr/avr.c    ../avr/clock.c ../avr/sleep.c  \
-					 ../avr/serial.c ../avr/xbee.c
+MORE_SRC = ../moose/avr.c    ../moose/clock.c ../moose/sleep.c  \
+					 ../moose/serial.c ../moose/xbee.c
 
 MCU=atmega1284p
 F_CPU=8000000
@@ -11,9 +11,9 @@ MORE_CDEFS=-DSERIAL_ON_USART1 # -DXBEE_ON_USART0 == default
 
 #MORE_CDEFS=-DDEBUG -DSERIAL_ON_USART1 # -DXBEE_ON_USART0 == default
 
-include ../avr/Makefile
+include ../moose/Makefile
 
 clean: clean_avr
 
 clean_avr:
-	@(cd ../avr; $(MAKE) clean)
+	@(cd ../moose; $(MAKE) clean)

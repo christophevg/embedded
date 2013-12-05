@@ -1,3 +1,3 @@
-MORE_SRC = ../avr/avr.c
+MORE_SRC = ../moose/avr.c
 
-include ../avr/Makefile
+include ../moose/Makefile

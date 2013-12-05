@@ -25,6 +25,9 @@ void wakeup(void);
 
 #define VALUES_COUNT 6  // 2 bytes for VCC, temperature & light
 
+// network config
+#define DESTINATION XBEE_COORDINATOR
+
 int main(void) {
 
   uint16_t reading;               // the 16-bit reading from the ADC
@@ -55,7 +58,7 @@ int main(void) {
 
   // show we're operational
   avr_clear_bit(PORTD, STATUS_LED); // visually by removing the boot indicator
-  xbee_transmit_string("HELLO");    // remotely to announce we're booted
+  send_str("HELLO");                // remotely to announce we're booted
 
   // the endless loop
   while(TRUE) {
@@ -87,12 +90,30 @@ int main(void) {
     values[1] = (reading >> 8 ) & 0x00FF;
 
     // print it to the serial
-    xbee_transmit(values, VALUES_COUNT);
+    send_bytes(values, VALUES_COUNT);
 
     sleep();
   }
 
   return(0);
+}
+
+void send_str(const char *string) {
+  send_bytes((uint8_t*)string, strlen(string));
+}
+
+void send_bytes(uint8_t *bytes, uint8_t size) {
+  xbee_tx_t frame;
+
+  frame.size        = size;
+  frame.id          = XB_TX_NO_RESPONSE;
+  frame.address     = XB_COORDINATOR;
+  frame.nw_address  = XB_NW_ADDR_UNKNOWN;
+  frame.radius      = XB_MAX_RADIUS;
+  frame.options     = XB_OPT_NONE;
+  frame.data        = bytes;
+
+  xbee_send(&frame);
 }
 
 void wakeup(void) {
