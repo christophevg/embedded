@@ -1,17 +1,11 @@
 MORE_SRC = ../moose/avr.c ../moose/serial.c
 
 MCU=atmega1284p
-F_CPU=16000000
+F_CPU=8000000
 
 AVRDUDE_PROGRAMMER=jtag2
 
 # external hardware composition ... yummie :-)
-MORE_CDEFS=-DSERIAL_ON_USART1
+MORE_CDEFS=-DSERIAL_ON_USART1 -DBLE_ON_USART0
 
 include ../moose/Makefile
-
-serial-digitus:
-	screen /dev/tty.usbserial-FTSJ84AI 9600
-
-serial-logilink:
-	screen /dev/tty.usbserial 9600

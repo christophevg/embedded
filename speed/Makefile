@@ -1,7 +1,7 @@
-MORE_SRC = ../moose/avr.c ../moose/serial.c
+MORE_SRC = ../moose/avr.c ../moose/clock.c ../moose/serial.c
 
 MCU=atmega1284p
-F_CPU=16000000
+F_CPU=8000000
 
 AVRDUDE_PROGRAMMER=jtag2
 
@@ -12,6 +12,3 @@ include ../moose/Makefile
 
 serial-digitus:
 	screen /dev/tty.usbserial-FTSJ84AI 9600
-
-serial-logilink:
-	screen /dev/tty.usbserial 9600
