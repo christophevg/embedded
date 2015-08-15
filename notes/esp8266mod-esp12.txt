@@ -1,0 +1,58 @@
+This file contains an example run of commands used to request a webpage of the
+internet.
+
+---
+
+AT
+
+AT+CIOBAUD=9600
+
+AT+RST
+
+AT+CWMODE=1
+
+AT+CWLAP
++CWLAP:(3,"GELICHTRAFFEL",-87,"00:16:38:6c:61:29",1)
++CWLAP:(0,"Camp2015-legacy",-76,"24:de:c6:26:66:a0",1)
++CWLAP:(0,"Camp2015-open-legacy",-76,"24:de:c6:26:66:a1",1)
++CWLAP:(0,"spacenet",-75,"24:de:c6:26:66:a2",1)
++CWLAP:(0,"freifunk.net",-75,"24:de:c6:26:66:a3",1)
++CWLAP:(3,"amsel",-89,"02:1a:11:f4:f5:20",6)
+
+AT+CWJAP="Camp2015-open-legacy",""
+
+AT+CIFSR
++CIFSR:STAIP,"151.217.239.133"
++CIFSR:STAMAC,"18:fe:34:fe:29:4f"
+
+AT+CIPSTART="TCP","nerdhero.org",80
+
+AT+CIPSEND=76
+
+GET / HTTP/1.1
+User-Agent: curl/7.37.0
+Host: nerdhero.org
+Accept: */*
+
+
+>>>
+
+SEND OK
+
++IPD,376:HTTP/1.1 200 OK
+Date: Sat, 15 Aug 2015 13:34:58 GMT
+Server: Apache/2.2.16 (Debian)
+Last-Modified: Sun, 13 Jan 2013 22:22:22 GMT
+ETag: "235c0e3-5c-4d332f65da380"
+Accept-Ranges: bytes
+Content-Length: 92
+Vary: Accept-Encoding
+Content-Type: text/html
+X-Pad: avoid browser bug
+
+<html><head>
+            </head><body>
+                         We are currently at work to restart our services.
+                                                                          </body></html>
+     CLOSED
+
