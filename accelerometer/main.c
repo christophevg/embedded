@@ -38,14 +38,12 @@ int main(void) {
     y = avr_adc_read(PIN_Y);
     z = avr_adc_read(PIN_Z);
 
-    // scale to [-1,+1]
-    gx = (x / 1024.0 * 2) - 1;
-    gy = (y / 1024.0 * 2) - 1;
-    gz = (z / 1024.0 * 2) - 1;
+    // scale to [-100,+100]
+    gx = (x / 1024.0 * 200) - 100;
+    gy = (y / 1024.0 * 200) - 100;
+    gz = (z / 1024.0 * 200) - 100;
 
-    printf("%lu\t%f\t%f\t%f\n", clock_get_millis(), gx, gy, gz);
-
-    _delay_ms(5);
+    printf("%lu\t%d\t%d\t%d\n", clock_get_millis(), (int)gx, (int)gy, (int)gz);
   }
 
   return(0);
