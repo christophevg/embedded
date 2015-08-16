@@ -21,8 +21,8 @@ def wait_for_nl():
 def getXYZ():
   while(True):
     try:
-      (x, y, z) = string.split(ser.readline(), "\t")
-      return (float(x), float(y), float(z))
+      (t, x, y, z) = string.split(ser.readline(), "\t")
+      return (int(t), float(x), float(y), float(z))
     except: pass
 
 wait_for_nl() # to avoid reading a partial line already being sent
@@ -45,7 +45,7 @@ z_data = np.zeros(100)
 
 def animate(i):
   global x_data, y_data, z_data
-  (xn,yn,zn) = getXYZ()
+  (t, xn,yn,zn) = getXYZ()
   x_data = np.append(x_data, xn)[-100:]
   y_data = np.append(y_data, yn)[-100:]
   z_data = np.append(z_data, zn)[-100:]

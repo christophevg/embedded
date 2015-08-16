@@ -8,6 +8,7 @@
 #include "../moose/avr.h"
 #include "../moose/bool.h"
 #include "../moose/serial.h"
+#include "../moose/clock.h"
 
 /* configuration of external components */
 #define XYZ_PORT DDRA
@@ -17,6 +18,7 @@
 
 int main(void) {
   avr_init();
+  clock_init();
   serial_init();
 
   // initialize the ADC for normal readings
@@ -41,7 +43,7 @@ int main(void) {
     gy = (y / 1024.0 * 2) - 1;
     gz = (z / 1024.0 * 2) - 1;
 
-    printf("%f\t%f\t%f\n", gx, gy, gz);
+    printf("%lu\t%f\t%f\t%f\n", clock_get_millis(), gx, gy, gz);
 
     _delay_ms(5);
   }
